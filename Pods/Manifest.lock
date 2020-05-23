@@ -1,0 +1,30 @@
+PODS:
+  - Alamofire (5.2.0)
+  - BubbleTransition (3.2.0)
+  - Moya (14.0.0):
+    - Moya/Core (= 14.0.0)
+  - Moya/Core (14.0.0):
+    - Alamofire (~> 5.0)
+  - Result (5.0.0)
+
+DEPENDENCIES:
+  - BubbleTransition (~> 3.2.0)
+  - Moya (~> 14.0)
+  - Result
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - BubbleTransition
+    - Moya
+    - Result
+
+SPEC CHECKSUMS:
+  Alamofire: c1ca147559e730bfb2182c8c7aafbdd90a867987
+  BubbleTransition: 2f112cc19772d9ab199bc850de92f5eb34744bce
+  Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
+  Result: ed341d2f236af425b803e690e9bd8fd0a0cb7c5a
+
+PODFILE CHECKSUM: 572ad87dfe8f5e283dd4db0d26f20546f66b035a
+
+COCOAPODS: 1.9.2
