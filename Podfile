@@ -6,6 +6,6 @@ target 'WeatherApp' do
 
   pod 'Moya', '~> 14.0'
   pod 'Result'
-  pod 'BubbleTransition', '~> 3.2.0'
+pod 'JTMaterialTransition', '~> 2.0'
 
 end

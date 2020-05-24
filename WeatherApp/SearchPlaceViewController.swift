@@ -17,11 +17,9 @@ class SearchPlaceViewController: UIViewController {
     
     var foundPlacesModel: PlacesModel?
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.foundPlacesTableView.delegate = self
         self.foundPlacesTableView.dataSource = self
         self.foundPlacesTableView.register(UINib(nibName: "FoundPlacesTableViewCell", bundle: nil), forCellReuseIdentifier: "FoundPlacesTableViewCell")
@@ -30,8 +28,7 @@ class SearchPlaceViewController: UIViewController {
         self.searchBarOutlet.delegate = self
         self.searchBarOutlet.becomeFirstResponder()
     }
-
-
+    
     
 
 }
@@ -72,20 +69,15 @@ extension SearchPlaceViewController: UITableViewDelegate, UITableViewDataSource 
 
 extension SearchPlaceViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        
         self.dismiss(animated: true, completion: nil)
+
         
     }
     
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-       
-        print(" CVB DidBeginEditing")
-        
-    }
     
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("CVB textDidChange")
-        
         ServiceManager.shared.getPlaces(query: self.searchBarOutlet.text ?? "") { (result) in
             switch result {
             case .success(let response):
@@ -100,12 +92,7 @@ extension SearchPlaceViewController: UISearchBarDelegate {
         }
     }
     
-    
-    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-        print("CVB DidEndEditing")
-        
-    }
-    
+
     
     
 }

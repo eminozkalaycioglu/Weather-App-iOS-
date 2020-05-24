@@ -7,9 +7,9 @@
 //
 
 import UIKit
-import BubbleTransition
+import JTMaterialTransition
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
     @IBOutlet weak var selectedPlaceLabel: UILabel!
     @IBOutlet weak var searchButtonOutlet: UIButton!
@@ -23,32 +23,34 @@ class ViewController: UIViewController {
     @IBOutlet weak var numberOfNextForecastLabel: UILabel!
     @IBOutlet weak var nextDaysCollectionView: UICollectionView!
     
-    
-    let transition = BubbleTransition()
+
     var activityIndicator: UIActivityIndicatorView?
     var forecastModel: ForecastModel?
     var extractedForecastList: [ExtractedForecast]?
+    var nextDaysForecastList: [[ForecastList]]?
     let colorsArray: [[String]] = [
         ["#FFE000","#799F0C"],
         ["#FF0099","#493240"],
         ["#000000","#0f9b0f"],
         ["#f12711","#f5af19"]
-        
     ]
+    
+    var selectedCell: NextDaysCollectionViewCell?
+    let transition = TransitionAnimator()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.isAnimating(true)
         self.getWeatherInfo()
-        
     }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionViewsView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height*100/100)
+
+        
         self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:.whiteLarge, color: .gray,  placeInTheCenterOf: view)
         self.isAnimating(true)
-
         self.todayForecastView.backgroundColor = "5D50FE".hexStringToUIColor()
         self.getDefaultPlace()
         self.setupCollectionViews()
@@ -66,9 +68,6 @@ class ViewController: UIViewController {
         self.mainView.isHidden = status
 
     }
-    
-    
-    
     
     func setupCollectionViews() {
         
@@ -118,7 +117,8 @@ class ViewController: UIViewController {
                 
                 self.forecastModel = response
                 self.extractedForecastList = self.extractForecast(forecast: response)
-                self.getTodayForecast()
+                self.nextDaysForecastList = self.extractForecastAsNextDays(forecast: response)
+                self.setTodayForecastView()
                 self.nextDaysCollectionView.reloadData()
                 self.isAnimating(false)
                 
@@ -130,7 +130,7 @@ class ViewController: UIViewController {
         
     }
     
-    func getTodayForecast() {
+    func setTodayForecastView() {
         let todayForecast = self.findTodayForecast(forecast: self.forecastModel ?? ForecastModel())
         self.todayTempLabel.text = "\(Int(todayForecast.main?.temp ?? 0))°"
         self.todayWeatherLabel.text = "\(todayForecast.weather?[0].main ?? "")"
@@ -176,19 +176,58 @@ class ViewController: UIViewController {
                 extractedList.append(extracted)
                 
             }
+        }
+        return extractedList
+    }
+    
+    func extractForecastAsNextDays(forecast: ForecastModel) -> [[ForecastList]] {
+        var tempForecast = forecast
+        
+        let dateOfToday = tempForecast.list?[0].dtTxt?.stringToDate()
+        while (dateOfToday?.daysBetweenDates(endDate: (tempForecast.list?[0].dtTxt?.stringToDate())!))! < 1 {
+            tempForecast.list?.remove(at: 0)
+            
+        }
+        
+        var extractedList = [[ForecastList()]]
+        extractedList.remove(at: 0)
+        var extracted = [ForecastList()]
+        extracted.remove(at: 0)
+        
+        for item in tempForecast.list! {
+            if extractedList.count == self.extractedForecastList?.count {
+                break
+            }
+            //&& (item.dtTxt != tempForecast.list![0].dtTxt)
+
+            
+            extracted.append(item)
+            
+            if item.dtTxt?.stringToDate().getHour() == 21  {
+//                extracted.append(item)
+
+                extractedList.append(extracted)
+                extracted.removeAll()
+                print("date: ", item.dtTxt)
+                
+            }
+            
+            
+            print("date: ", item.dtTxt)
             
         }
         
         return extractedList
         
+        
     }
-    
-    
     
     @IBAction func searchButtonAction(_ sender: Any) {
         
         let searchVC = SearchPlaceViewController()
+        searchVC.modalPresentationStyle = .fullScreen
         self.present(searchVC, animated: true, completion: nil)
+        
     }
     
 }
@@ -204,16 +243,14 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NextDaysCollectionViewCell", for:indexPath) as! NextDaysCollectionViewCell
         
         let temperatures = self.extractedForecastList?[indexPath.row]
-        
         let date = temperatures?.forecastOfDay?.dtTxt ?? ""
-        
         let dayOfWeek = DateToDay.shared.getDayOfWeek(date) ?? 10
-        
         let nameOfDay = DateToDay.shared.getNameOfDay(dayOfWeek: dayOfWeek)
         
+//        cell.baseView.backgroundColor = self.colorsArray[indexPath.row][0].hexStringToUIColor()
         
+        cell.baseView.getGradientLayer(colors: self.colorsArray[indexPath.row], targetView: cell)
         
-        cell.baseView.layer.insertSublayer(self.getGradientLayer(colors: self.colorsArray[indexPath.row], targetView: cell), at: 0)
         let icon = temperatures?.forecastOfDay?.weather?[0].icon ?? "searchButton"
         
         cell.weatherIcon.image = UIImage(named: "a" + icon )
@@ -232,30 +269,82 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.selectedCell = collectionView.cellForItem(at: indexPath) as? NextDaysCollectionViewCell
+        
+        let detailVC = DetailViewController()
+        
+        detailVC.setBaseViewGradientColors(colors: self.colorsArray[indexPath.row])
+        detailVC.setForecast(forecast: self.nextDaysForecastList?[indexPath.row] ?? [ForecastList]())
+        detailVC.modalPresentationStyle = .fullScreen
+        detailVC.transitioningDelegate = self
+        self.present(detailVC, animated: true, completion: nil)
+        
+    }
+    
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        guard let originFrame = self.selectedCell?.superview?.convert(self.selectedCell?.frame ?? CGRect(), to: nil) else {
+          return transition
+         }
+        self.transition.originFrame = originFrame
+        self.transition.presenting = true
+        self.selectedCell?.isHidden = true
+        return self.transition
+    }
+    
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.transition.presenting = false
+        self.selectedCell?.isHidden = false
+        return self.transition
+    }
+}
+
+extension UIViewController {
+    
+    func hexStringFromColor(colors: [CGColor]) -> [String] {
+        var colorStringArray: [String] = [String]()
+        colorStringArray.remove(at: 0)
+        for color in colors {
+            let components = color.components
+            let r: CGFloat = components?[0] ?? 0.0
+            let g: CGFloat = components?[1] ?? 0.0
+            let b: CGFloat = components?[2] ?? 0.0
+
+            let hexString = String.init(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
+            colorStringArray.append(hexString)
+        }
+        
+       
+       return colorStringArray
+    }
+    
+    
     
 }
 
-extension ViewController {
-    func getGradientLayer(colors: [String], targetView: UIView) -> CAGradientLayer {
+extension UIView {
+    func getGradientLayer(colors: [String], targetView: UIView) {
+        
+        for layer in (self.layer.sublayers ?? []){
+            if let layer1 = layer as? CAGradientLayer{
+                layer1.removeFromSuperlayer()
+            }
+        }
+        
         var cgColors: [CGColor] = [CGColor]()
         
         for color in colors {
             cgColors.append(color.hexStringToUIColor().cgColor)
         }
+        
         let gradientLayer = CAGradientLayer()
         
         gradientLayer.colors = cgColors
         gradientLayer.locations = [0.0, 1.0]
         gradientLayer.frame = targetView.bounds
         
-        return gradientLayer
+        self.layer.insertSublayer(gradientLayer, at: 0)
     }
-    
-    
-}
-
-extension ViewController:UIViewControllerTransitioningDelegate {
-    
 }
 
 extension UIActivityIndicatorView {
