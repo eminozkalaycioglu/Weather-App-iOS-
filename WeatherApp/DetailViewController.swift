@@ -49,14 +49,14 @@ class DetailViewController: UIViewController {
             self.baseView.backgroundColor = UIColor.blue
         }
         
-        self.dismissView.layer.cornerRadius = dismissView.frame.size.width/2
-        self.dismissView.clipsToBounds = true
-        
-        self.dismissView.layer.shadowColor = UIColor.gray.cgColor
-        self.dismissView.layer.masksToBounds = false
-        self.dismissView.layer.shadowOpacity = 0.6
-        self.dismissView.layer.shadowOffset = CGSize.zero
-        self.dismissView.layer.shadowRadius = 5
+        self.dismissView.doCircle()
+        self.dismissView.setShadow(color: UIColor.gray, opacity: 0.6, radius: 5)
+//        self.dismissView.layer.shadowColor = UIColor.gray.cgColor
+//        self.dismissView.layer.masksToBounds = false
+//        self.dismissView.layer.shadowOpacity = 0.6
+//
+//        self.dismissView.layer.shadowOffset = CGSize.zero
+//        self.dismissView.layer.shadowRadius = 5
         
         self.dismissImageView.image = self.dismissImageView.image?.withRenderingMode(.alwaysTemplate)
         self.dismissImageView.tintColor = "#FF0090".hexStringToUIColor()
@@ -67,3 +67,5 @@ class DetailViewController: UIViewController {
     
 
 }
+
+

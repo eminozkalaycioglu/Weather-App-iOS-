@@ -299,53 +299,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     }
 }
 
-extension UIViewController {
-    
-    func hexStringFromColor(colors: [CGColor]) -> [String] {
-        var colorStringArray: [String] = [String]()
-        colorStringArray.remove(at: 0)
-        for color in colors {
-            let components = color.components
-            let r: CGFloat = components?[0] ?? 0.0
-            let g: CGFloat = components?[1] ?? 0.0
-            let b: CGFloat = components?[2] ?? 0.0
 
-            let hexString = String.init(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
-            colorStringArray.append(hexString)
-        }
-        
-       
-       return colorStringArray
-    }
-    
-    
-    
-}
-
-extension UIView {
-    func getGradientLayer(colors: [String], targetView: UIView) {
-        
-        for layer in (self.layer.sublayers ?? []){
-            if let layer1 = layer as? CAGradientLayer{
-                layer1.removeFromSuperlayer()
-            }
-        }
-        
-        var cgColors: [CGColor] = [CGColor]()
-        
-        for color in colors {
-            cgColors.append(color.hexStringToUIColor().cgColor)
-        }
-        
-        let gradientLayer = CAGradientLayer()
-        
-        gradientLayer.colors = cgColors
-        gradientLayer.locations = [0.0, 1.0]
-        gradientLayer.frame = targetView.bounds
-        
-        self.layer.insertSublayer(gradientLayer, at: 0)
-    }
-}
 
 extension UIActivityIndicatorView {
     
