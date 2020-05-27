@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.2.0)
+  - Hero (1.5.0)
   - JTMaterialTransition (2.0.3)
   - Moya (14.0.0):
     - Moya/Core (= 14.0.0)
@@ -8,6 +9,7 @@ PODS:
   - Result (5.0.0)
 
 DEPENDENCIES:
+  - Hero
   - JTMaterialTransition (~> 2.0)
   - Moya (~> 14.0)
   - Result
@@ -15,16 +17,18 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - Alamofire
+    - Hero
     - JTMaterialTransition
     - Moya
     - Result
 
 SPEC CHECKSUMS:
   Alamofire: c1ca147559e730bfb2182c8c7aafbdd90a867987
+  Hero: b7385b75e7259da62f4f85462f59a5082d66b058
   JTMaterialTransition: 7ff22aae6cd969734d775708f08e3656c52cb7bf
   Moya: 5b45dacb75adb009f97fde91c204c1e565d31916
   Result: ed341d2f236af425b803e690e9bd8fd0a0cb7c5a
 
-PODFILE CHECKSUM: b84b2f89e2b9f4aa6cea1ef69244970e60b4ebea
+PODFILE CHECKSUM: b83b235d1ca2f2527a5b5fc856a5bb2e6880d1a1
 
 COCOAPODS: 1.9.2

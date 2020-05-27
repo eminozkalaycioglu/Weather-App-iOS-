@@ -34,15 +34,19 @@ class DateToDay {
         }
     }
     
-    func getDayOfWeek(_ today:String) -> Int? {
-        let formatter  = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        guard let todayDate = formatter.date(from: today) else { return nil }
+    func getDayOfWeek(todayDate: Date) -> Int {
         let myCalendar = Calendar(identifier: .gregorian)
-        
         let weekDay = myCalendar.component(.weekday, from: todayDate)
         return weekDay
     }
+    
+    func getNameOfDayFromDate(date: Date) -> String{
+        let dayOfWeek = self.getDayOfWeek(todayDate: date)
+        let nameOfDay = self.getNameOfDay(dayOfWeek: dayOfWeek)
+        return nameOfDay
+        
+    }
+    
     
     private init() {
         

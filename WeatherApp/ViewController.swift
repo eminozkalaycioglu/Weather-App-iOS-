@@ -7,13 +7,15 @@
 //
 
 import UIKit
-import JTMaterialTransition
+import Hero
 
 class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
 
     @IBOutlet weak var selectedPlaceLabel: UILabel!
     @IBOutlet weak var searchButtonOutlet: UIButton!
     
+    @IBOutlet weak var todayForecastViewWidth: NSLayoutConstraint!
+    @IBOutlet weak var collectionViewsViewHeight: NSLayoutConstraint!
     @IBOutlet weak var collectionViewsView: UIView!
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var todayHumidityLabel: UILabel!
@@ -23,33 +25,54 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
     @IBOutlet weak var numberOfNextForecastLabel: UILabel!
     @IBOutlet weak var nextDaysCollectionView: UICollectionView!
     
-
     var activityIndicator: UIActivityIndicatorView?
     var forecastModel: ForecastModel?
     var extractedForecastList: [ExtractedForecast]?
     var nextDaysForecastList: [[ForecastList]]?
     let colorsArray: [[String]] = [
-        ["#FFE000","#799F0C"],
-        ["#FF0099","#493240"],
-        ["#000000","#0f9b0f"],
-        ["#f12711","#f5af19"]
+        ["#FF416C","#FF4B2B"],
+        ["#9370DB","#2F0743"],
+        ["#6DCA98","#005528"],
+        ["#f5af19","#f12711"],
+        ["#FF416C","#FF4B2B"],
+        ["#9370DB","#2F0743"],
+        ["#6DCA98","#005528"],
+        ["#f5af19","#f12711"]
+        
     ]
     
     var selectedCell: NextDaysCollectionViewCell?
-    let transition = TransitionAnimator()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.isAnimating(true)
+                
+                
         self.getWeatherInfo()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        self.collectionViewsViewHeight.constant = self.getCollectionViewCellHeight() + 80
+
+        let widthLimit = UIScreen.main.bounds.width - 32
+        if self.todayForecastView.frame.size.height <= widthLimit{
+            self.todayForecastView.addConstraint(NSLayoutConstraint(item: self.todayForecastView, attribute: .height, relatedBy: .equal, toItem: self.todayForecastView, attribute: .width, multiplier: 1, constant: 0))
+
+        }
+        else {
+            let widthConstraint = NSLayoutConstraint(item: self.todayForecastView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: widthLimit)
+            self.todayForecastView.addConstraint(widthConstraint)
+        }
+        
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.definesPresentationContext = true
         
-        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle:.whiteLarge, color: .gray,  placeInTheCenterOf: view)
+        self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge, color: .gray,  placeInTheCenterOf: view)
         self.isAnimating(true)
         self.todayForecastView.backgroundColor = "5D50FE".hexStringToUIColor()
         self.getDefaultPlace()
@@ -86,7 +109,7 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 16, right: 0)
         self.nextDaysCollectionView.setCollectionViewLayout(layout, animated: true)
         
     }
@@ -148,7 +171,6 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
         }
         return (forecast.list?[0])!
         
-        
     }
     
     func extractForecast(forecast: ForecastModel) -> [ExtractedForecast] {
@@ -186,7 +208,6 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
         let dateOfToday = tempForecast.list?[0].dtTxt?.stringToDate()
         while (dateOfToday?.daysBetweenDates(endDate: (tempForecast.list?[0].dtTxt?.stringToDate())!))! < 1 {
             tempForecast.list?.remove(at: 0)
-            
         }
         
         var extractedList = [[ForecastList()]]
@@ -198,27 +219,15 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
             if extractedList.count == self.extractedForecastList?.count {
                 break
             }
-            //&& (item.dtTxt != tempForecast.list![0].dtTxt)
-
-            
             extracted.append(item)
             
             if item.dtTxt?.stringToDate().getHour() == 21  {
-//                extracted.append(item)
-
                 extractedList.append(extracted)
                 extracted.removeAll()
-                print("date: ", item.dtTxt)
-                
             }
-            
-            
-            print("date: ", item.dtTxt)
-            
         }
         
         return extractedList
-        
         
     }
     
@@ -243,72 +252,54 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NextDaysCollectionViewCell", for:indexPath) as! NextDaysCollectionViewCell
         
         let temperatures = self.extractedForecastList?[indexPath.row]
-        let date = temperatures?.forecastOfDay?.dtTxt ?? ""
-        let dayOfWeek = DateToDay.shared.getDayOfWeek(date) ?? 10
-        let nameOfDay = DateToDay.shared.getNameOfDay(dayOfWeek: dayOfWeek)
-        
-//        cell.baseView.backgroundColor = self.colorsArray[indexPath.row][0].hexStringToUIColor()
-        
-        cell.baseView.getGradientLayer(colors: self.colorsArray[indexPath.row], targetView: cell)
+        if let date = temperatures?.forecastOfDay?.dtTxt?.stringToDate() {
+            cell.nameOfDayLabel.text = DateToDay.shared.getNameOfDayFromDate(date: date)
+        }
         
         let icon = temperatures?.forecastOfDay?.weather?[0].icon ?? "searchButton"
-        
-        cell.weatherIcon.image = UIImage(named: "a" + icon )
-        
-        cell.nameOfDayLabel.text = nameOfDay
+        let image = UIImage(named: "a" + icon)
+        cell.baseView.getGradientLayer(colors: self.colorsArray[indexPath.row], targetView: cell)
+        cell.weatherIcon.image = image
         cell.tempOfDay.text = "\(Int(temperatures?.forecastOfDay?.main?.temp ?? 0))°"
         cell.nightTempOfDay.text = "\(Int(temperatures?.nightForecastOfDay?.main?.temp ?? 0))°"
         cell.morningTempOfDay.text = "\(Int(temperatures?.morningForecastOfDay?.main?.temp ?? 0))°"
+        
+        cell.setShadow(color: (self.colorsArray[indexPath.row].last?.hexStringToUIColor() ?? UIColor.yellow), opacity: 3.0, shadowRadius: 6.0, cornerRadius: cell.baseView.layer.cornerRadius)
+
 
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: 191, height: 252 )
+        
+        return CGSize(width: 191, height: self.getCollectionViewCellHeight())
         
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.selectedCell?.hero.id = nil
         self.selectedCell = collectionView.cellForItem(at: indexPath) as? NextDaysCollectionViewCell
         
         let detailVC = DetailViewController()
-        
+
         detailVC.setBaseViewGradientColors(colors: self.colorsArray[indexPath.row])
         detailVC.setForecast(forecast: self.nextDaysForecastList?[indexPath.row] ?? [ForecastList]())
-        detailVC.modalPresentationStyle = .fullScreen
-        detailVC.transitioningDelegate = self
+        detailVC.modalPresentationStyle = .overFullScreen
+        
+        self.selectedCell?.hero.id = "selectedCell"
         self.present(detailVC, animated: true, completion: nil)
         
     }
     
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        guard let originFrame = self.selectedCell?.superview?.convert(self.selectedCell?.frame ?? CGRect(), to: nil) else {
-          return transition
-         }
-        self.transition.originFrame = originFrame
-        self.transition.presenting = true
-        self.selectedCell?.isHidden = true
-        return self.transition
-    }
-    
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        self.transition.presenting = false
-        self.selectedCell?.isHidden = false
-        return self.transition
-    }
 }
 
-
-
-extension UIActivityIndicatorView {
-    
-    convenience init(activityIndicatorStyle: UIActivityIndicatorView.Style, color: UIColor, placeInTheCenterOf parentView: UIView) {
-        self.init(style: activityIndicatorStyle)
-        center = parentView.center
-        self.color = color
-        parentView.addSubview(self)
+extension ViewController {
+    func getCollectionViewCellHeight() -> CGFloat{
+        var height = UIScreen.main.bounds.height/3
+        if height > 260 {
+            height = 260
+        }
+        return height
     }
 }
-
-

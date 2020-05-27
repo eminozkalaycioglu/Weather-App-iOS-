@@ -20,7 +20,7 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p4N-3A-Etu">
-                                        <rect key="frame" x="0.0" y="498" width="414" height="320"/>
+                                        <rect key="frame" x="0.0" y="418" width="414" height="400"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Next 5 Days" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O2K-rR-dbK">
                                                 <rect key="frame" x="8" y="8" width="398" height="20.5"/>
@@ -32,7 +32,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="d5b-VA-d0e">
-                                                <rect key="frame" x="8" y="44.5" width="398" height="267.5"/>
+                                                <rect key="frame" x="8" y="44.5" width="398" height="355.5"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Cms-yR-133">
                                                     <size key="itemSize" width="50" height="50"/>
@@ -50,16 +50,16 @@
                                             <constraint firstItem="d5b-VA-d0e" firstAttribute="leading" secondItem="p4N-3A-Etu" secondAttribute="leading" constant="8" id="AuM-Ts-xhn"/>
                                             <constraint firstItem="O2K-rR-dbK" firstAttribute="top" secondItem="p4N-3A-Etu" secondAttribute="top" constant="8" id="Opu-Ma-MTe"/>
                                             <constraint firstItem="O2K-rR-dbK" firstAttribute="leading" secondItem="p4N-3A-Etu" secondAttribute="leading" constant="8" id="P1c-i1-0ai"/>
-                                            <constraint firstAttribute="bottom" secondItem="d5b-VA-d0e" secondAttribute="bottom" constant="8" id="csh-hk-rBR"/>
-                                            <constraint firstAttribute="height" constant="320" id="tdy-W4-vOS"/>
+                                            <constraint firstAttribute="bottom" secondItem="d5b-VA-d0e" secondAttribute="bottom" id="csh-hk-rBR"/>
+                                            <constraint firstAttribute="height" constant="400" id="tdy-W4-vOS"/>
                                             <constraint firstAttribute="trailing" secondItem="d5b-VA-d0e" secondAttribute="trailing" constant="8" id="xd7-12-w5j"/>
                                         </constraints>
                                     </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LF4-kM-p3r" customClass="BaseView" customModule="WeatherApp" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="80" width="382" height="386"/>
+                                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LF4-kM-p3r" customClass="BaseView" customModule="WeatherApp" customModuleProvider="target">
+                                        <rect key="frame" x="38" y="72" width="338" height="338"/>
                                         <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aDr-0q-pMH">
-                                                <rect key="frame" x="91" y="65" width="200" height="256"/>
+                                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aDr-0q-pMH">
+                                                <rect key="frame" x="69" y="41" width="200" height="256"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="25" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Xd-qP-0AS">
                                                         <rect key="frame" x="8" y="8" width="184" height="90"/>
@@ -169,13 +169,11 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="LF4-kM-p3r" firstAttribute="leading" secondItem="KxW-Nx-ySQ" secondAttribute="leading" constant="16" id="3H0-Bs-RQe"/>
-                                    <constraint firstAttribute="trailing" secondItem="LF4-kM-p3r" secondAttribute="trailing" constant="16" id="8HH-nR-077"/>
-                                    <constraint firstItem="LF4-kM-p3r" firstAttribute="top" secondItem="xSE-yY-Z0v" secondAttribute="bottom" constant="16" id="EqI-t0-TCH"/>
+                                    <constraint firstItem="LF4-kM-p3r" firstAttribute="top" secondItem="xSE-yY-Z0v" secondAttribute="bottom" constant="8" id="EqI-t0-TCH"/>
                                     <constraint firstAttribute="trailing" secondItem="xSE-yY-Z0v" secondAttribute="trailing" id="I6k-NF-rIK"/>
                                     <constraint firstItem="xSE-yY-Z0v" firstAttribute="leading" secondItem="KxW-Nx-ySQ" secondAttribute="leading" id="Im5-Kq-OZL"/>
                                     <constraint firstAttribute="trailing" secondItem="p4N-3A-Etu" secondAttribute="trailing" id="Ppk-jV-bMW"/>
-                                    <constraint firstItem="p4N-3A-Etu" firstAttribute="top" secondItem="LF4-kM-p3r" secondAttribute="bottom" constant="32" id="TPB-Ch-e6W"/>
+                                    <constraint firstItem="p4N-3A-Etu" firstAttribute="top" secondItem="LF4-kM-p3r" secondAttribute="bottom" constant="8" id="TPB-Ch-e6W"/>
                                     <constraint firstItem="p4N-3A-Etu" firstAttribute="leading" secondItem="KxW-Nx-ySQ" secondAttribute="leading" id="eyt-eO-GeV"/>
                                     <constraint firstAttribute="bottom" secondItem="p4N-3A-Etu" secondAttribute="bottom" id="q8O-Em-Fqa"/>
                                     <constraint firstItem="xSE-yY-Z0v" firstAttribute="top" secondItem="KxW-Nx-ySQ" secondAttribute="top" id="xgm-mB-FIq"/>
@@ -184,6 +182,7 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="LF4-kM-p3r" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Bze-tm-GJN"/>
                             <constraint firstItem="KxW-Nx-ySQ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="QHV-oD-yJn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KxW-Nx-ySQ" secondAttribute="trailing" id="UTV-5q-3W4"/>
                             <constraint firstItem="KxW-Nx-ySQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="gkc-4c-dvD"/>
@@ -193,6 +192,7 @@
                     </view>
                     <connections>
                         <outlet property="collectionViewsView" destination="p4N-3A-Etu" id="vpf-Jn-Z3a"/>
+                        <outlet property="collectionViewsViewHeight" destination="tdy-W4-vOS" id="VK2-L3-fIE"/>
                         <outlet property="mainView" destination="KxW-Nx-ySQ" id="SmV-sd-AaB"/>
                         <outlet property="nextDaysCollectionView" destination="d5b-VA-d0e" id="hv7-Af-P4F"/>
                         <outlet property="numberOfNextForecastLabel" destination="O2K-rR-dbK" id="uGe-F3-EaQ"/>

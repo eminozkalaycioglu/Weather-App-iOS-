@@ -18,12 +18,14 @@ class NextDaysCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var nightTempOfDay: UILabel!
     @IBOutlet weak var tempOfDay: UILabel!
     @IBOutlet weak var nameOfDayLabel: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
+        
         self.weatherIcon.image = self.weatherIcon.image?.withRenderingMode(.alwaysTemplate)
         self.weatherIcon.tintColor = UIColor.white
-        self.cloudView.backgroundColor = UIColor(patternImage: UIImage(named: "cloud")!)
-        // Initialization code
+        self.cloudView.backgroundColor = UIColor(patternImage:UIImage(named: "cloud")!)
+        
     }
 
 }
