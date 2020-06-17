@@ -11,13 +11,13 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DetailViewController" customModule="WeatherApp" customModuleProvider="target">
             <connections>
                 <outlet property="baseView" destination="qO9-11-vDY" id="64y-fU-ExY"/>
+                <outlet property="dayLabel" destination="1hH-dQ-jEC" id="Ii8-2U-h5j"/>
                 <outlet property="dismissImageView" destination="2sa-bW-jXg" id="OTZ-6Q-nld"/>
                 <outlet property="dismissView" destination="GR6-2d-hWp" id="RRO-sE-D9p"/>
                 <outlet property="hourlyForecastCollectionView" destination="8oa-1t-A8t" id="Vso-vb-iqJ"/>
                 <outlet property="tempOfDayLabel" destination="hDD-kr-Lag" id="kCT-cw-qkh"/>
                 <outlet property="tempOfMorningLabel" destination="lay-NY-F5G" id="eh3-qw-bGM"/>
                 <outlet property="tempOfNightLabel" destination="RPJ-wZ-w0C" id="8E8-FY-QSD"/>
-                <outlet property="testLabel" destination="1hH-dQ-jEC" id="2VO-zj-qnP"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
                 <outlet property="weatherIconImageView" destination="e6C-r9-FSW" id="zmu-TJ-y2o"/>
             </connections>

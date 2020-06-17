@@ -11,12 +11,12 @@ import Hero
 
 class DetailViewController: UIViewController {
 
+    @IBOutlet weak var dayLabel: UILabel!
     @IBOutlet weak var hourlyForecastCollectionView: UICollectionView!
     @IBOutlet weak var dismissImageView: UIImageView!
     @IBOutlet weak var dismissView: UIView!
     @IBOutlet weak var baseView: BaseView!
     @IBOutlet weak var weatherIconImageView: UIImageView!
-    @IBOutlet weak var testLabel: UILabel!
     @IBOutlet weak var tempOfDayLabel: UILabel!
     @IBOutlet weak var tempOfNightLabel: UILabel!
     @IBOutlet weak var tempOfMorningLabel: UILabel!
@@ -122,7 +122,7 @@ class DetailViewController: UIViewController {
         self.tempOfNightLabel.font = self.tempOfNightLabel.font.withSize(self.tempOfDayLabel.font.pointSize/2)
         self.tempOfMorningLabel.font = self.tempOfMorningLabel.font.withSize(self.tempOfDayLabel.font.pointSize/2)
 
-        self.testLabel.text = self.viewModel.getNameOfDay()
+        self.dayLabel.text = self.viewModel.getNameOfDay()
 
         self.viewModel.setMainForecast()
         
