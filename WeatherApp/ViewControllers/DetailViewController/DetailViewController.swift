@@ -17,13 +17,17 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var baseView: BaseView!
     @IBOutlet weak var weatherIconImageView: UIImageView!
     @IBOutlet weak var testLabel: UILabel!
-    
     @IBOutlet weak var tempOfDayLabel: UILabel!
     @IBOutlet weak var tempOfNightLabel: UILabel!
     @IBOutlet weak var tempOfMorningLabel: UILabel!
     
-    private var forecast: [ForecastList]?
     private var baseViewGradientColors: [String]?
+    
+    lazy var viewModel: DetailViewModel = {
+        return DetailViewModel()
+    }()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.dismissView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(actionClose(_:))))
@@ -32,16 +36,42 @@ class DetailViewController: UIViewController {
         self.baseView.hero.id = "selectedCell"
         self.baseView.hero.modifiers = [.translate(y:100)]
         
+        self.viewModel.hourIs12Closure = {
+            [weak self] (_ temp: Int, _ weatherIcon: String) in
+            DispatchQueue.main.async {
+                self?.weatherIconImageView.image = UIImage(named: weatherIcon)
+                self?.tempOfDayLabel.text = String(temp) + "°"
+            }
+            
+        }
+        
+        self.viewModel.hourIs9Closure = {
+            [weak self] (_ temp: Int) in
+            DispatchQueue.main.async {
+                self?.tempOfMorningLabel.text = String(temp) + "°"
+            }
+            
+        }
+        
+        self.viewModel.hourIs21Closure = {
+            [weak self] (_ temp: Int) in
+            DispatchQueue.main.async {
+                self?.tempOfNightLabel.text = String(temp) + "°"
+            }
+            
+        }
         
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.dismissView.isHidden = true
+        self.hideMainForecast(true)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.dismissView.isHidden = false
+        self.hideMainForecast(false)
         
     }
     override func viewWillLayoutSubviews() {
@@ -75,10 +105,13 @@ class DetailViewController: UIViewController {
         
     }
     
-    func setForecast(forecast: [ForecastList]) {
-        self.forecast = forecast
+    func hideMainForecast(_ status: Bool) {
+        
+        self.weatherIconImageView.isHidden = status
+        self.tempOfDayLabel.isHidden = status
+        self.tempOfNightLabel.isHidden = status
+        self.tempOfMorningLabel.isHidden = status
     }
-    
     func setBaseViewGradientColors(colors: [String]) {
         self.baseViewGradientColors = colors
     }
@@ -89,35 +122,9 @@ class DetailViewController: UIViewController {
         self.tempOfNightLabel.font = self.tempOfNightLabel.font.withSize(self.tempOfDayLabel.font.pointSize/2)
         self.tempOfMorningLabel.font = self.tempOfMorningLabel.font.withSize(self.tempOfDayLabel.font.pointSize/2)
 
-        if let date = self.forecast?[0].dtTxt?.stringToDate() {
-            self.testLabel.text = DateToDay.shared.getNameOfDayFromDate(date: date)
-        }
-        var weatherIcon = "searchButton"
-        var tempOfDay: Float = 0
-        var tempOfNight: Float = 0
-        var tempOfMorning: Float = 0
-        for item in self.forecast! {
-            if item.dtTxt?.stringToDate().getHour() == 12 {
-                weatherIcon = "a" + (item.weather?.first?.icon ?? "")
-                tempOfDay = item.main?.temp ?? 0
-                
-            }
-            if item.dtTxt?.stringToDate().getHour() == 9 {
-                tempOfMorning = item.main?.temp ?? 0
+        self.testLabel.text = self.viewModel.getNameOfDay()
 
-            }
-            if item.dtTxt?.stringToDate().getHour() == 21 {
-                tempOfNight = item.main?.temp ?? 0
-
-            }
-            
-        }
-        
-        self.tempOfDayLabel.text = String(Int(tempOfDay)) + "°"
-        self.tempOfNightLabel.text = String(Int(tempOfNight)) + "°"
-        self.tempOfMorningLabel.text = String(Int(tempOfMorning)) + "°"
-        
-        self.weatherIconImageView.image = UIImage(named: weatherIcon)
+        self.viewModel.setMainForecast()
         
         if let colors = self.baseViewGradientColors {
             self.baseView.getGradientLayer(colors: colors, targetView: self.view)
@@ -126,7 +133,7 @@ class DetailViewController: UIViewController {
             self.baseView.backgroundColor = UIColor.blue
         }
 
-        self.dismissView.doCircle()
+        self.dismissView.makeCircle()
         self.dismissView.setShadow(color: UIColor.gray, opacity: 0.6, radius: 5)
         
         let path = UIBezierPath(roundedRect:self.baseView.bounds, byRoundingCorners:[.topRight, .topLeft], cornerRadii: CGSize(width: 40, height: 40))
@@ -143,13 +150,14 @@ class DetailViewController: UIViewController {
 
 extension DetailViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.forecast?.count ?? 0
+        return self.viewModel.getForecastCount()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "HourlyForecastCollectionViewCell", for:indexPath) as! HourlyForecastCollectionViewCell
-        let hourAndMinute = self.forecast?[indexPath.row].dtTxt?.stringToDate().getHourAndMinute()
+        let hourAndMinute = self.viewModel.getHourAndMinute(at: indexPath)
+        
         if let hour = hourAndMinute?.hour, let minute = hourAndMinute?.minute {
             cell.timeLabel.text = String(format: "%02ld:%02ld", hour, minute)
         }
@@ -157,12 +165,12 @@ extension DetailViewController: UICollectionViewDelegate, UICollectionViewDataSo
             cell.timeLabel.text = ""
         }
         
-        let icon = "a" + (self.forecast?[indexPath.row].weather?[0].icon ?? "")
+        let icon = self.viewModel.getSpecificForecastWeatherIcon(at: indexPath)
         
         cell.setColorIndex(indexPath.row)
         cell.setImageStr(str: icon)
         
-        if let temp = self.forecast?[indexPath.row].main?.temp {
+        if let temp = self.viewModel.getSpecificForecastTemp(at: indexPath) {
             cell.tempLabel.text = String(Int(temp)) + "°"
         }
         else {

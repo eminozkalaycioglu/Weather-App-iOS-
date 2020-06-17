@@ -12,7 +12,6 @@ class DateToDay {
     
     static let shared = DateToDay()
     
-    
     func getNameOfDay(dayOfWeek: Int) -> String {
         switch dayOfWeek {
         case 1:
@@ -47,10 +46,6 @@ class DateToDay {
         
     }
     
-    
-    private init() {
-        
-    }
-    
+    private init() { }
     
 }

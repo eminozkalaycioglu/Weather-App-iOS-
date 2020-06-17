@@ -18,7 +18,6 @@ extension Date {
         }
         return false
         
-        
     }
     
     func getHour() -> Int {
@@ -32,8 +31,6 @@ extension Date {
         let hourMin = Calendar.current.dateComponents([.hour,.minute], from: self)
         return hourMin
     }
-    
-    
     
     func daysBetweenDates(endDate: Date) -> Int
     {

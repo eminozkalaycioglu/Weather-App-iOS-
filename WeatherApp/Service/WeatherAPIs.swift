@@ -13,7 +13,7 @@ extension WeatherAPI: TargetType {
     
     var weatherApiKey: String {
         switch self {
-        case .getForecast( _):
+        case .getForecast( _, _):
             return "ceb746300d424b32f082ff50b295aa2e"
         default:
             return ""
@@ -30,7 +30,7 @@ extension WeatherAPI: TargetType {
         case .getPlaces( _):
             return URL(string: "https://places-dsn.algolia.net/1")!
             
-        case .getForecast(_):
+        case .getForecast( _, _):
             return URL(string: "https://api.openweathermap.org/data/2.5")!
         }
         
@@ -40,7 +40,7 @@ extension WeatherAPI: TargetType {
         switch self {
         case .getPlaces( _):
             return "/places/query"
-        case .getForecast(_):
+        case .getForecast( _, _):
             return "/forecast"
         }
     }

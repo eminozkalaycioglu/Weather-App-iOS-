@@ -10,89 +10,69 @@ import UIKit
 
 class SearchPlaceViewController: UIViewController {
 
-    
-    
     @IBOutlet weak var searchBarOutlet: UISearchBar!
     @IBOutlet weak var foundPlacesTableView: UITableView!
     
-    var foundPlacesModel: PlacesModel?
-    
+    lazy var viewModel: SearchPlaceViewModel = {
+        return SearchPlaceViewModel()
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.foundPlacesTableView.keyboardDismissMode = .onDrag
         self.foundPlacesTableView.delegate = self
         self.foundPlacesTableView.dataSource = self
         self.foundPlacesTableView.register(UINib(nibName: "FoundPlacesTableViewCell", bundle: nil), forCellReuseIdentifier: "FoundPlacesTableViewCell")
         
-        
         self.searchBarOutlet.delegate = self
         self.searchBarOutlet.becomeFirstResponder()
+        
+        
+        self.viewModel.foundPlacesTableViewReloadDataClosure = {
+            [weak self] () in
+            DispatchQueue.main.async {
+                self?.foundPlacesTableView.reloadData()
+            }
+        }
     }
     
-    
-
 }
 
 extension SearchPlaceViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.foundPlacesModel?.nbHits ?? 0
+        return self.viewModel.getPlaceCount()
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let model = self.foundPlacesModel?.hits![indexPath.row] else {
-            return
-        }
-        PlaceData.shared.place = model
-        
+        self.viewModel.setPlace(at: indexPath)
         self.dismiss(animated: true, completion: nil)
-        
     }
-    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FoundPlacesTableViewCell", for: indexPath)  as! FoundPlacesTableViewCell
-        cell.firsstPartOfAddress.text = (self.foundPlacesModel?.hits?[indexPath.row].localeNames?.defaultField?[0] ?? "") + ", " + (self.foundPlacesModel?.hits?[indexPath.row].county?.defaultField?[0] ?? "")
+        let place = self.viewModel.getSpecificPlaceInfo(at: indexPath)
         
-        cell.secondPartOfAddress.text = (self.foundPlacesModel?.hits?[indexPath.row].administrative?[0] ?? "") + ", " + (self.foundPlacesModel?.hits?[indexPath.row].country?.defaultField ?? "")
+        cell.firsstPartOfAddress.text = (place.localeNames?.defaultField?[0] ?? "") + ", " + (place.county?.defaultField?[0] ?? "")
+        
+        cell.secondPartOfAddress.text = (place.administrative?[0] ?? "") + ", " + (place.country?.defaultField ?? "")
         
         return cell
     }
-    
-    
     
 }
 
 extension SearchPlaceViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        
         self.dismiss(animated: true, completion: nil)
-
-        
     }
-    
-    
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        ServiceManager.shared.getPlaces(query: self.searchBarOutlet.text ?? "") { (result) in
-            switch result {
-            case .success(let response):
-                self.foundPlacesModel = response
-                self.foundPlacesTableView.reloadData()
-                
-                
-            case .failure(let error):
-                debugPrint(error.localizedDescription)
-            }
-            
-        }
+        self.viewModel.getPlaces(query: self.searchBarOutlet.text)
     }
-    
-
     
     
 }

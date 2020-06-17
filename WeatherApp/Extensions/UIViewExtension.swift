@@ -18,7 +18,7 @@ extension UIView {
         
     }
     
-    func doCircle() {
+    func makeCircle() {
         self.layer.cornerRadius = self.frame.size.width/2
         self.clipsToBounds = true
     }
@@ -47,5 +47,11 @@ extension UIView {
     }
 }
 
+extension UIViewController {
+    
+    func dismissKeyboard() {
+        self.view.endEditing(true)
+    }
+}
 
 

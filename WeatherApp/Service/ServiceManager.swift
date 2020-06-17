@@ -52,7 +52,7 @@ public final class ServiceManager {
         fetch(target: .getPlaces(query: query), completion: completion)
     }
     
-    func getWeather(lat: Float, lon: Float, completion: @escaping (_ result: APIResult<ForecastModel>) -> Void) {
+    func getForecast(lat: Float, lon: Float, completion: @escaping (_ result: APIResult<ForecastModel>) -> Void) {
         fetch(target: .getForecast(lat: lat, lon: lon), completion: completion)
     
     }
