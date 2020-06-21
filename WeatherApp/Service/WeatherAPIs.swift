@@ -5,6 +5,7 @@ import Moya
 enum WeatherAPI {
     
     case getPlaces(query: String)
+    case getPlaceFromCoord(lat: Float, lon: Float)
     case getForecast(lat: Float, lon: Float)
 }
 
@@ -30,6 +31,9 @@ extension WeatherAPI: TargetType {
         case .getPlaces( _):
             return URL(string: "https://places-dsn.algolia.net/1")!
             
+        case .getPlaceFromCoord( _, _):
+            return URL(string: "https://places-dsn.algolia.net/1")!
+            
         case .getForecast( _, _):
             return URL(string: "https://api.openweathermap.org/data/2.5")!
         }
@@ -39,6 +43,8 @@ extension WeatherAPI: TargetType {
     public var path: String {
         switch self {
         case .getPlaces( _):
+            return "/places/query"
+        case .getPlaceFromCoord(_,_):
             return "/places/query"
         case .getForecast( _, _):
             return "/forecast"
@@ -63,10 +69,19 @@ extension WeatherAPI: TargetType {
             return .requestParameters(
                 parameters: [
                     "query": query,
-                    "type": "city",
-                    "countries": "tr"
+                    "type": "city"
+//                    "countries": "tr"
                     ] ,
                 encoding: URLEncoding.default)
+            
+        case .getPlaceFromCoord(let lat, let lon):
+            return .requestParameters(
+                parameters: [
+                    "aroundLatLng": "\(lat.description),\(lon.description)",
+                    "type": "city"
+//                    "countries": "tr"
+                    
+            ], encoding: URLEncoding.default)
             
         case .getForecast(let lat, let lon):
             return .requestParameters(

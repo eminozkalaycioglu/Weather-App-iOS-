@@ -12,7 +12,7 @@ class BaseView: UIView {
             self.layer.borderColor = borderColor.cgColor
         }
     }
-//    
+  
     @IBInspectable var shadowRadius: CGFloat = 0 {
         didSet {
             self.layer.shadowRadius = shadowRadius

@@ -52,10 +52,16 @@ public final class ServiceManager {
         fetch(target: .getPlaces(query: query), completion: completion)
     }
     
+    func getPlaceFromCoord(lat: Float, lon: Float,completion: @escaping (_ result: APIResult<PlacesModel>) -> Void) {
+        fetch(target: .getPlaceFromCoord(lat: lat, lon: lon), completion: completion)
+    }
+    
     func getForecast(lat: Float, lon: Float, completion: @escaping (_ result: APIResult<ForecastModel>) -> Void) {
         fetch(target: .getForecast(lat: lat, lon: lon), completion: completion)
     
     }
+    
+    
 
 }
 

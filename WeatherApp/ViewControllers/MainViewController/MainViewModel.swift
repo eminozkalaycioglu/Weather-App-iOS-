@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 class MainViewModel {
     private var forecastModel: ForecastModel?
@@ -24,7 +25,8 @@ class MainViewModel {
         ["#f5af19","#f12711"]
         
     ]
-    
+    let locationManager = CLLocationManager()
+    private var currentLocation: CLLocation!
     var setTodayForecastViewClosure: (()->())?
     var reloadDataNextDaysCollectionViewClosure: (()->())?
     var setAnimateClosure: ((_ status: Bool)->())?
@@ -75,22 +77,46 @@ class MainViewModel {
         
     }
     
+    private func getCurrentLocation() {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse || CLLocationManager.authorizationStatus() ==  .authorizedAlways {
+            currentLocation = self.locationManager.location
+        }
+        
+    }
+    
     
     func getDefaultPlace() {
-        ServiceManager.shared.getPlaces(query: PlaceData.shared.defaultQuery) { (result) in
-            
-            switch result {
-            case .success(let response):
-                PlaceData.shared.place = response.hits?[0]
-                self.getWeatherInfo()
+        self.getCurrentLocation()
+        if let loc = self.currentLocation {
+            ServiceManager.shared.getPlaceFromCoord(lat: Float(loc.coordinate.latitude), lon: Float(loc.coordinate.longitude)) { (result) in
+                switch result {
+                case .success(let response):
+                    PlaceData.shared.place = response.hits?[0]
+                    self.getWeatherInfo()
+                    
+                case .failure(let error):
+                    debugPrint(error.localizedDescription)
+
+                }
+            }
+        }
+        else {
+            ServiceManager.shared.getPlaces(query: PlaceData.shared.defaultQuery) { (result) in
                 
-                
-            case .failure(let error):
-                debugPrint(error.localizedDescription)
+                switch result {
+                case .success(let response):
+                    PlaceData.shared.place = response.hits?[0]
+                    self.getWeatherInfo()
+                    
+                    
+                case .failure(let error):
+                    debugPrint(error.localizedDescription)
+                    
+                }
                 
             }
-            
         }
+        
     }
     
 //    this func is extracting 3 time periods from crude forecast (as morning, night and noon) to show every next days cell
@@ -168,3 +194,4 @@ class MainViewModel {
     }
     
 }
+

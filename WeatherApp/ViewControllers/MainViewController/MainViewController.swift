@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 import Hero
 
 class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
@@ -57,6 +58,9 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
         self.definesPresentationContext = true
         
         self.activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge, color: .gray,  placeInTheCenterOf: view)
@@ -87,8 +91,9 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
                 self?.selectedPlaceLabel.text = administrative + ", " + countryCode
             }
         }
-            
-        self.viewModel.getDefaultPlace()
+        
+        self.setupLocationManager()
+//        self.viewModel.getDefaultPlace()
         self.setupCollectionViews()
         
     }
@@ -103,6 +108,11 @@ class ViewController: UIViewController, UIViewControllerTransitioningDelegate {
         }
         self.mainView.isHidden = status
 
+    }
+    func setupLocationManager() {
+        self.viewModel.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.viewModel.locationManager.delegate = self
+        self.viewModel.locationManager.requestWhenInUseAuthorization()
     }
     
     func setupCollectionViews() {
@@ -209,4 +219,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
         
     }
     
+}
+
+extension ViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        self.viewModel.getDefaultPlace()
+    }
 }
